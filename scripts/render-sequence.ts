@@ -16,11 +16,10 @@ await server.listen();
 try {
   const baseUrl = server.resolvedUrls?.local[0] ?? "http://127.0.0.1:5173/";
   const job: RenderJob = {
-    canvasWidth: 1920,
-    canvasHeight: 1080,
+    canvasWidth: 1000,
+    canvasHeight: 1000,
     totalFrames: 100,
     fps: 25,
-    assets: {},
     presets: createDefaultPresets(),
   };
 

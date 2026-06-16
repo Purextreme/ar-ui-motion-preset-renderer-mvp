@@ -1,23 +1,21 @@
 import { useEffect, useMemo, useState } from "react";
 import { AssetPanel } from "./editor/AssetPanel";
 import { EditorLayout } from "./editor/EditorLayout";
-import { Inspector } from "./editor/Inspector";
 import { Stage } from "./editor/Stage";
 import { TimelineControls } from "./editor/TimelineControls";
 import { createDefaultPresets } from "./render/defaultPresets";
-import type { PresetProps, RenderAssets, RenderJob } from "./render/types";
+import type { PresetProps, RenderJob } from "./render/types";
 
 const defaultCanvas = {
-  width: 1920,
-  height: 1080,
+  width: 1000,
+  height: 1000,
 };
 
 export function App() {
-  const [canvasWidth, setCanvasWidth] = useState(defaultCanvas.width);
-  const [canvasHeight, setCanvasHeight] = useState(defaultCanvas.height);
-  const [presets, setPresets] = useState<PresetProps[]>(() => createDefaultPresets());
+  const canvasWidth = defaultCanvas.width;
+  const canvasHeight = defaultCanvas.height;
+  const [presets] = useState<PresetProps[]>(() => createDefaultPresets());
   const [selectedPresetId, setSelectedPresetId] = useState("orbital-navigation");
-  const [assets, setAssets] = useState<RenderAssets>({});
   const [frame, setFrame] = useState(0);
   const [totalFrames, setTotalFrames] = useState(100);
   const [fps, setFps] = useState(25);
@@ -42,38 +40,6 @@ export function App() {
     return () => window.clearInterval(interval);
   }, [fps, isPlaying, totalFrames]);
 
-  function updatePreset(nextPreset: PresetProps) {
-    setPresets((currentPresets) =>
-      currentPresets.map((preset) => (preset.id === nextPreset.id ? nextPreset : preset)),
-    );
-  }
-
-  function updatePresetPatch(id: string, patch: Partial<PresetProps>) {
-    setPresets((currentPresets) =>
-      currentPresets.map((preset) => (preset.id === id ? { ...preset, ...patch } : preset)),
-    );
-  }
-
-  function handleShipImage(url: string) {
-    setAssets((currentAssets) => ({
-      ...currentAssets,
-      shipImage: url,
-    }));
-    setPresets((currentPresets) =>
-      currentPresets.map((preset) =>
-        preset.type === "ShipDetailPanel"
-          ? {
-              ...preset,
-              params: {
-                ...preset.params,
-                shipImageUrl: url,
-              },
-            }
-          : preset,
-      ),
-    );
-  }
-
   async function renderPresets(targetPresets: PresetProps[]) {
     setIsRendering(true);
     setRenderStatus("Rendering...");
@@ -83,9 +49,6 @@ export function App() {
       canvasHeight,
       totalFrames,
       fps,
-      assets: {
-        shipImage: assets.shipImage,
-      },
       presets: targetPresets.map((preset) => ({
         ...preset,
         visible: true,
@@ -121,18 +84,9 @@ export function App() {
         <AssetPanel
           presets={presets}
           selectedPresetId={selectedPresetId}
-          assets={assets}
           onSelectPreset={setSelectedPresetId}
-          onToggleVisible={(id, visible) => updatePresetPatch(id, { visible })}
-          onReferenceImage={(url, width, height) => {
-            setAssets((currentAssets) => ({
-              ...currentAssets,
-              referenceImage: url,
-            }));
-            setCanvasWidth(width);
-            setCanvasHeight(height);
-          }}
-          onShipImage={handleShipImage}
+          canvasWidth={canvasWidth}
+          canvasHeight={canvasHeight}
         />
       }
       center={
@@ -142,14 +96,10 @@ export function App() {
           frame={frame}
           totalFrames={totalFrames}
           fps={fps}
-          assets={assets}
           presets={presets}
           selectedPresetId={selectedPresetId}
-          onSelectPreset={setSelectedPresetId}
-          onMovePreset={(id, x, y) => updatePresetPatch(id, { x, y })}
         />
       }
-      right={<Inspector preset={selectedPreset} onChange={updatePreset} />}
       bottom={
         <TimelineControls
           frame={frame}

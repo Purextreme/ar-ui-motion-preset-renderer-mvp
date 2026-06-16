@@ -1,5 +1,4 @@
 import { loopSin } from "../../utils/animation";
-import { toBoolean, toNumber, toStringValue } from "../../utils/math";
 import type { PresetComponent } from "../../render/types";
 
 const statRows = [
@@ -12,14 +11,9 @@ const statRows = [
 ];
 
 export const ShipDetailPanel: PresetComponent = ({ props, context }) => {
-  const { progress, assets } = context;
-  const accentColor = toStringValue(props.params.accentColor, "#8a6cff");
-  const shipImageUrl = toStringValue(props.params.shipImageUrl, "") || assets.shipImage;
-  const shipX = toNumber(props.params.shipX, 96);
-  const shipY = toNumber(props.params.shipY, 108);
-  const shipScale = toNumber(props.params.shipScale, 1);
-  const scanlineEnabled = toBoolean(props.params.scanlineEnabled, true);
-  const scanlineOpacity = toNumber(props.params.scanlineOpacity, 0.45);
+  const { progress, previewGuides } = context;
+  const accentColor = "#8a6cff";
+  const scanlineOpacity = 0.45;
   const floatY = loopSin(progress) * 8;
   const scanY = 110 + progress * 250;
   const glow = 0.45 + Math.abs(loopSin(progress)) * 0.22;
@@ -60,26 +54,25 @@ export const ShipDetailPanel: PresetComponent = ({ props, context }) => {
       <text x="34" y="48" className="ui-title">QL-020170</text>
       <text x="34" y="72" className="ui-caption">ORBITAL PLATFORM</text>
 
-      <g transform={`translate(${shipX} ${shipY + floatY}) scale(${shipScale})`}>
-        {shipImageUrl ? (
-          <image href={shipImageUrl} x="0" y="0" width="328" height="230" preserveAspectRatio="xMidYMid meet" />
-        ) : (
-          <g opacity="0.86">
-            <path
-              d="M36 128 C96 42, 236 36, 302 128 C228 166, 110 166, 36 128 Z"
-              fill="#223a72"
-              stroke={accentColor}
-              strokeOpacity="0.8"
-            />
-            <ellipse cx="169" cy="126" rx="102" ry="21" fill="#5a6ca5" opacity="0.45" />
-            <circle cx="168" cy="100" r="24" fill="#7bdcff" opacity="0.28" />
-          </g>
-        )}
-      </g>
-
-      {scanlineEnabled ? (
-        <rect x="76" y={scanY} width="368" height="38" fill="url(#shipScan)" opacity="0.86" />
+      {previewGuides ? (
+        <g transform={`translate(76 ${122 + floatY})`}>
+          <rect
+            x="0"
+            y="0"
+            width="368"
+            height="238"
+            rx="10"
+            fill="none"
+            stroke="#7bdcff"
+            strokeDasharray="10 8"
+            strokeOpacity="0.5"
+          />
+          <path d="M18 119 H350 M184 18 V220" stroke="#7bdcff" strokeOpacity="0.18" />
+          <text x="184" y="128" textAnchor="middle" className="ui-guide">此处留空</text>
+        </g>
       ) : null}
+
+      <rect x="76" y={scanY} width="368" height="38" fill="url(#shipScan)" opacity="0.86" />
 
       <g transform="translate(34 468)">
         {statRows.map(([label, value], index) => {

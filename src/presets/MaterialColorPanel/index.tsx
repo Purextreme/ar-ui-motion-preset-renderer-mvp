@@ -19,7 +19,6 @@ const colors = [
 export const MaterialColorPanel: PresetComponent = ({ props, context }) => {
   const { progress } = context;
   const selectedMaterial = String(props.params.selectedMaterial ?? "metallic");
-  const floatY = loopSin(progress) * 3;
   const scanX = progress * 210 - 80;
 
   return (
@@ -37,9 +36,14 @@ export const MaterialColorPanel: PresetComponent = ({ props, context }) => {
         <pattern id="carbonPattern" width="12" height="12" patternUnits="userSpaceOnUse">
           <path d="M0 12 L12 0 M-4 4 L4 -4 M8 16 L16 8" stroke="#71809c" strokeOpacity="0.35" />
         </pattern>
+        {materials.map((material, index) => (
+          <clipPath key={material.key} id={`materialTileClip-${index}`}>
+            <rect x="0" y="0" width="124" height="100" rx="6" />
+          </clipPath>
+        ))}
       </defs>
 
-      <g transform={`translate(0 ${floatY})`}>
+      <g>
         <rect x="1" y="1" width="498" height="298" rx="7" fill="url(#materialGlass)" />
         <rect x="1.5" y="1.5" width="497" height="297" rx="7" fill="none" stroke="#6fe5ff" strokeOpacity="0.45" />
         <text x="28" y="42" className="ui-title">MATERIAL / COLOR</text>
@@ -61,12 +65,14 @@ export const MaterialColorPanel: PresetComponent = ({ props, context }) => {
                   stroke={selected ? "#8a6cff" : "#5ee7ff"}
                   strokeOpacity={pulse}
                 />
-                <path
-                  d={`M${scanX} 102 L${scanX + 44} 0`}
-                  stroke="url(#materialScan)"
-                  strokeWidth="18"
-                  opacity="0.5"
-                />
+                <g clipPath={`url(#materialTileClip-${index})`}>
+                  <path
+                    d={`M${scanX} 102 L${scanX + 44} 0`}
+                    stroke="url(#materialScan)"
+                    strokeWidth="18"
+                    opacity="0.5"
+                  />
+                </g>
                 <text x="12" y="126" className="ui-small">{material.label}</text>
               </g>
             );

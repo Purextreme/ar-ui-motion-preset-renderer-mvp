@@ -8,7 +8,7 @@ export function createDefaultPresets(): PresetProps[] {
       x: 112,
       y: 96,
       width: 520,
-      height: 430,
+      height: 760,
       scale: 1,
       rotation: 0,
       opacity: 1,
@@ -45,15 +45,7 @@ export function createDefaultPresets(): PresetProps[] {
       opacity: 1,
       visible: true,
       zIndex: 3,
-      params: {
-        shipImageUrl: "",
-        shipX: 96,
-        shipY: 108,
-        shipScale: 1,
-        scanlineEnabled: true,
-        scanlineOpacity: 0.45,
-        accentColor: "#8a6cff",
-      },
+      params: {},
     },
   ];
 }

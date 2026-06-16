@@ -26,9 +26,8 @@ export function RenderOnly({ job }: RenderOnlyProps) {
       frame={frame}
       totalFrames={job.totalFrames}
       fps={job.fps}
-      assets={job.assets}
       presets={job.presets}
-      showReference={false}
+      previewGuides={false}
     />
   );
 }

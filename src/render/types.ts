@@ -3,11 +3,6 @@ export type PresetType =
   | "MaterialColorPanel"
   | "ShipDetailPanel";
 
-export type RenderAssets = {
-  referenceImage?: string;
-  shipImage?: string;
-};
-
 export type PresetProps = {
   id: string;
   type: PresetType;
@@ -28,7 +23,7 @@ export type PresetRenderContext = {
   totalFrames: number;
   fps: number;
   progress: number;
-  assets: RenderAssets;
+  previewGuides: boolean;
 };
 
 export type PresetComponent = (args: {
@@ -41,7 +36,6 @@ export type RenderJob = {
   canvasHeight: number;
   totalFrames: number;
   fps: number;
-  assets: RenderAssets;
   presets: PresetProps[];
 };
 

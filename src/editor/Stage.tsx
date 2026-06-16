@@ -1,5 +1,5 @@
 import { RenderScene } from "../render/RenderScene";
-import type { PresetProps, RenderAssets } from "../render/types";
+import type { PresetProps } from "../render/types";
 
 type StageProps = {
   canvasWidth: number;
@@ -7,14 +7,13 @@ type StageProps = {
   frame: number;
   totalFrames: number;
   fps: number;
-  assets: RenderAssets;
   presets: PresetProps[];
   selectedPresetId: string;
-  onSelectPreset: (id: string) => void;
-  onMovePreset: (id: string, x: number, y: number) => void;
 };
 
 export function Stage(props: StageProps) {
+  const visiblePresets = props.presets.filter((preset) => preset.id === props.selectedPresetId);
+
   return (
     <main className="stage-panel">
       <div className="stage-toolbar">
@@ -23,7 +22,7 @@ export function Stage(props: StageProps) {
       </div>
       <div className="stage-scroll">
         <div className="stage-scale-frame">
-          <RenderScene {...props} showReference />
+          <RenderScene {...props} presets={visiblePresets} previewGuides />
         </div>
       </div>
     </main>
