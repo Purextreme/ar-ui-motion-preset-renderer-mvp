@@ -278,3 +278,29 @@ The reference image is intentionally excluded from render jobs sent to export.
 Stop development on this Windows machine after this handoff.
 
 The remaining work should continue on the Mac mini because local automation on this machine is unreliable under the installed security software.
+
+## Retest After Permission Change
+
+After the Windows machine permissions were opened, a minimal retest was performed.
+
+Passed:
+
+```text
+git status --short
+Playwright Chromium launch
+Vite dev server HTTP 200 at http://127.0.0.1:5173/
+Playwright page smoke test
+```
+
+Smoke test DOM result:
+
+```json
+{
+  "titles": ["ASSETS", "PRESET", "INSPECTOR"],
+  "buttons": ["Play", "Render Current", "Render All"]
+}
+```
+
+The previous `browserType.launch: spawn EPERM` issue appears resolved for direct Playwright usage.
+
+No further feature development was performed during this retest.
