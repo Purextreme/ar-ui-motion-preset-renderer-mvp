@@ -1,5 +1,5 @@
 import { chromium } from "playwright";
-import { mkdir } from "node:fs/promises";
+import { mkdir, rm } from "node:fs/promises";
 import path from "node:path";
 import type { RenderJob } from "../src/render/types";
 
@@ -19,6 +19,7 @@ export async function renderJob(
   try {
     for (const preset of job.presets) {
       const targetDir = path.join(outputRoot, preset.type);
+      await rm(targetDir, { recursive: true, force: true });
       await mkdir(targetDir, { recursive: true });
 
       const page = await browser.newPage({
@@ -66,4 +67,3 @@ export async function renderJob(
     frames: job.totalFrames,
   };
 }
-
