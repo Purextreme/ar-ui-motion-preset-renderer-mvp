@@ -14,7 +14,7 @@ const defaultCanvas = {
 export function App() {
   const canvasWidth = defaultCanvas.width;
   const canvasHeight = defaultCanvas.height;
-  const [presets] = useState<PresetProps[]>(() => createDefaultPresets());
+  const [presets, setPresets] = useState<PresetProps[]>(() => createDefaultPresets());
   const [selectedPresetId, setSelectedPresetId] = useState("orbital-navigation");
   const [frame, setFrame] = useState(0);
   const [totalFrames, setTotalFrames] = useState(100);
@@ -85,6 +85,13 @@ export function App() {
           presets={presets}
           selectedPresetId={selectedPresetId}
           onSelectPreset={setSelectedPresetId}
+          onUpdatePresetParams={(presetId, nextParams) => {
+            setPresets((currentPresets) => currentPresets.map((preset) => (
+              preset.id === presetId
+                ? { ...preset, params: { ...preset.params, ...nextParams } }
+                : preset
+            )));
+          }}
           canvasWidth={canvasWidth}
           canvasHeight={canvasHeight}
         />

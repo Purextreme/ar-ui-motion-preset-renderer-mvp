@@ -1,5 +1,6 @@
 import { loopSin } from "../../utils/animation";
 import { colorSwatches } from "../../utils/colors";
+import { getPresetColors, getPresetColorStyle } from "../../render/presetStyle";
 import type { PresetComponent } from "../../render/types";
 
 const materials = [
@@ -18,11 +19,12 @@ const colors = [
 
 export const MaterialColorPanel: PresetComponent = ({ props, context }) => {
   const { progress } = context;
+  const presetColors = getPresetColors(props.params);
   const selectedMaterial = String(props.params.selectedMaterial ?? "metallic");
   const scanX = progress * 210 - 80;
 
   return (
-    <svg className="preset-svg material-svg" viewBox="0 0 500 300" role="img">
+    <svg className="preset-svg material-svg" viewBox="0 0 500 300" role="img" style={getPresetColorStyle(props.params)}>
       <defs>
         <linearGradient id="materialGlass" x1="0" x2="1" y1="0" y2="1">
           <stop offset="0%" stopColor="#132744" stopOpacity="0.72" />
@@ -45,7 +47,7 @@ export const MaterialColorPanel: PresetComponent = ({ props, context }) => {
 
       <g>
         <rect x="1" y="1" width="498" height="298" rx="7" fill="url(#materialGlass)" />
-        <rect x="1.5" y="1.5" width="497" height="297" rx="7" fill="none" stroke="#6fe5ff" strokeOpacity="0.45" />
+        <rect x="1.5" y="1.5" width="497" height="297" rx="7" fill="none" stroke={presetColors.lineColor} strokeOpacity="0.45" />
         <text x="28" y="42" className="ui-title">MATERIAL / COLOR</text>
 
         <g transform="translate(28 76)">
@@ -62,7 +64,7 @@ export const MaterialColorPanel: PresetComponent = ({ props, context }) => {
                   rx="6"
                   fill={material.key === "carbon" ? "url(#carbonPattern)" : material.fill}
                   opacity={material.key === "energy" ? 0.82 : 0.7}
-                  stroke={selected ? "#8a6cff" : "#5ee7ff"}
+                  stroke={selected ? presetColors.highlightTextColor : presetColors.lineColor}
                   strokeOpacity={pulse}
                 />
                 <g clipPath={`url(#materialTileClip-${index})`}>
@@ -94,7 +96,7 @@ export const MaterialColorPanel: PresetComponent = ({ props, context }) => {
           })}
         </g>
 
-        <g transform="translate(432 32)" stroke="#7bdcff" strokeOpacity="0.75">
+        <g transform="translate(432 32)" stroke={presetColors.lineColor} strokeOpacity="0.75">
           <path d="M0 0 H28 M0 8 H22 M0 16 H28" />
         </g>
       </g>

@@ -1,4 +1,5 @@
 import { loopSin } from "../../utils/animation";
+import { getPresetColors, getPresetColorStyle } from "../../render/presetStyle";
 import type { PresetComponent } from "../../render/types";
 
 const statRows = [
@@ -12,14 +13,15 @@ const statRows = [
 
 export const ShipDetailPanel: PresetComponent = ({ props, context }) => {
   const { progress, previewGuides } = context;
-  const accentColor = "#8a6cff";
+  const presetColors = getPresetColors(props.params);
+  const accentColor = presetColors.highlightTextColor;
   const scanlineOpacity = 0.45;
   const floatY = loopSin(progress) * 8;
   const scanY = 110 + progress * 250;
   const glow = 0.45 + Math.abs(loopSin(progress)) * 0.22;
 
   return (
-    <svg className="preset-svg ship-svg" viewBox="0 0 520 760" role="img">
+    <svg className="preset-svg ship-svg" viewBox="0 0 520 760" role="img" style={getPresetColorStyle(props.params)}>
       <defs>
         <linearGradient id="shipGlass" x1="0" x2="1" y1="0" y2="1">
           <stop offset="0%" stopColor="#10213e" stopOpacity="0.76" />
@@ -50,7 +52,7 @@ export const ShipDetailPanel: PresetComponent = ({ props, context }) => {
         stroke={accentColor}
         strokeOpacity={glow}
       />
-      <path d="M34 86 H486 M34 430 H486" stroke="#64ddff" strokeOpacity="0.28" />
+      <path d="M34 86 H486 M34 430 H486" stroke={presetColors.lineColor} strokeOpacity="0.28" />
       <text x="34" y="48" className="ui-title">QL-020170</text>
       <text x="34" y="72" className="ui-caption">ORBITAL PLATFORM</text>
 
@@ -63,11 +65,11 @@ export const ShipDetailPanel: PresetComponent = ({ props, context }) => {
             height="238"
             rx="10"
             fill="none"
-            stroke="#7bdcff"
+            stroke={presetColors.lineColor}
             strokeDasharray="10 8"
             strokeOpacity="0.5"
           />
-          <path d="M18 119 H350 M184 18 V220" stroke="#7bdcff" strokeOpacity="0.18" />
+          <path d="M18 119 H350 M184 18 V220" stroke={presetColors.lineColor} strokeOpacity="0.18" />
           <text x="184" y="128" textAnchor="middle" className="ui-guide">此处留空</text>
         </g>
       ) : null}

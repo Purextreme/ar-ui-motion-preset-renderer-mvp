@@ -3,7 +3,42 @@
 }
 
 :root {
-  --open-source-text-fonts: "OPPOSans", "OPPO Sans", "Source Han Sans SC", "Source Han Sans CN", "Source Han Sans", "Noto Sans CJK SC", "Noto Sans SC", "思源黑体", "思源黑体 SC", "思源黑体 CN";
+  --app-font-oppo: "App OPPOSans";
+}
+
+@font-face {
+  font-family: "App OPPOSans";
+  font-style: normal;
+  font-weight: 300;
+  src: local("OPPOSans L");
+}
+
+@font-face {
+  font-family: "App OPPOSans";
+  font-style: normal;
+  font-weight: 400;
+  src: local("OPPOSans R");
+}
+
+@font-face {
+  font-family: "App OPPOSans";
+  font-style: normal;
+  font-weight: 500;
+  src: local("OPPOSans M");
+}
+
+@font-face {
+  font-family: "App OPPOSans";
+  font-style: normal;
+  font-weight: 700;
+  src: local("OPPOSans H");
+}
+
+@font-face {
+  font-family: "App OPPOSans";
+  font-style: normal;
+  font-weight: 800;
+  src: local("OPPOSans B");
 }
 
 html,
@@ -19,7 +54,8 @@ body {
   background:
     radial-gradient(circle at 22% 12%, rgba(75, 137, 255, 0.18), transparent 34%),
     linear-gradient(135deg, #08101d 0%, #12091b 54%, #051d24 100%);
-  font-family: var(--open-source-text-fonts);
+  font-family: var(--app-font-oppo);
+  font-weight: 400;
 }
 
 body.render-body {
@@ -80,7 +116,7 @@ select {
   margin-bottom: 12px;
   color: #7bdcff;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 500;
   letter-spacing: 0;
   text-transform: uppercase;
 }
@@ -92,9 +128,31 @@ select {
 }
 
 .small-copy {
+  font-weight: 400;
   color: #8fa8ba;
   font-size: 12px;
   line-height: 1.7;
+}
+
+.color-control {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 42px;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  color: #a9bed2;
+  font-size: 12px;
+}
+
+.color-control input {
+  width: 42px;
+  min-height: 28px;
+  padding: 2px;
+}
+
+.font-note {
+  margin-top: 10px;
+  color: #d9eefb;
 }
 
 .stage-panel {
@@ -154,6 +212,9 @@ select {
 }
 
 .preset-svg {
+  --preset-text-color: #c8e5ff;
+  --preset-line-color: #7ec4ff;
+  --preset-highlight-text-color: #e9f8ff;
   display: block;
   width: 100%;
   height: 100%;
@@ -161,41 +222,42 @@ select {
 }
 
 .preset-svg text {
-  font-family: var(--open-source-text-fonts);
+  font-family: var(--app-font-oppo);
+  font-weight: 400;
 }
 
-.ui-title {
-  fill: #e9f8ff;
+.preset-svg .ui-title {
+  fill: var(--preset-highlight-text-color);
   font-size: 22px;
   font-weight: 700;
   letter-spacing: 0;
 }
 
-.ui-caption {
-  fill: #83cfff;
+.preset-svg .ui-caption {
+  fill: var(--preset-text-color);
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 300;
   letter-spacing: 0;
 }
 
-.ui-small {
-  fill: #c8e5ff;
+.preset-svg .ui-small {
+  fill: var(--preset-text-color);
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 400;
   letter-spacing: 0;
 }
 
-.ui-value {
-  fill: #ffffff;
+.preset-svg .ui-value {
+  fill: var(--preset-highlight-text-color);
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 500;
   letter-spacing: 0;
 }
 
-.ui-guide {
-  fill: #9fdfff;
+.preset-svg .ui-guide {
+  fill: var(--preset-highlight-text-color);
   font-size: 18px;
-  font-weight: 700;
+  font-weight: 500;
   letter-spacing: 0;
 }
 

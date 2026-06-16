@@ -1,4 +1,5 @@
 import { loopCos, loopSin } from "../../utils/animation";
+import { getPresetColors, getPresetColorStyle } from "../../render/presetStyle";
 import type { PresetComponent } from "../../render/types";
 
 type OrbitTrack = {
@@ -84,8 +85,9 @@ function getOrbitPoint(track: OrbitTrack, progress: number, phase = 0) {
   };
 }
 
-export const OrbitalNavigationPanel: PresetComponent = ({ context }) => {
+export const OrbitalNavigationPanel: PresetComponent = ({ props, context }) => {
   const { progress } = context;
+  const colors = getPresetColors(props.params);
   const pulse = 0.55 + Math.abs(loopSin(progress)) * 0.28;
   const scanY = 100 + progress * 190;
   const sweepX = 58 + progress * 398;
@@ -96,7 +98,7 @@ export const OrbitalNavigationPanel: PresetComponent = ({ context }) => {
   const amberLeadDot = getOrbitPoint(mainOrbit, progress, 0.96);
 
   return (
-    <svg className="preset-svg orbital-svg" viewBox="0 0 520 760" role="img">
+    <svg className="preset-svg orbital-svg" viewBox="0 0 520 760" role="img" style={getPresetColorStyle(props.params)}>
       <defs>
         <linearGradient id="orbitalGlass" x1="0" x2="1" y1="0" y2="1">
           <stop offset="0%" stopColor="#102345" stopOpacity="0.78" />
@@ -146,14 +148,14 @@ export const OrbitalNavigationPanel: PresetComponent = ({ context }) => {
       </defs>
 
       <rect x="1" y="1" width="518" height="758" rx="8" fill="url(#orbitalGlass)" />
-      <rect x="1.5" y="1.5" width="517" height="757" rx="8" fill="none" stroke="#7ec4ff" strokeOpacity={pulse} />
+      <rect x="1.5" y="1.5" width="517" height="757" rx="8" fill="none" stroke={colors.lineColor} strokeOpacity={pulse} />
       <path
         d="M16 1 H35 M485 1 H504 M1 19 V39 M519 19 V39 M1 721 V741 M519 721 V741 M16 759 H35 M485 759 H504"
-        stroke="#9bd9ff"
+        stroke={colors.lineColor}
         strokeOpacity="0.76"
       />
-      <path d="M42 96 H478 M42 407 H478 M42 676 H478" stroke="#5aa7ff" strokeOpacity="0.18" />
-      <path d="M18 20 V740 M502 20 V740" stroke="#6baeff" strokeOpacity="0.18" />
+      <path d="M42 96 H478 M42 407 H478 M42 676 H478" stroke={colors.lineColor} strokeOpacity="0.18" />
+      <path d="M18 20 V740 M502 20 V740" stroke={colors.lineColor} strokeOpacity="0.18" />
 
       <text x="48" y="48" className="ui-title" fill="#8fb9ff">TRAJECTORY SIMULATION</text>
       <text x="48" y="78" className="ui-caption">ORBITAL INSERTION</text>
@@ -161,7 +163,7 @@ export const OrbitalNavigationPanel: PresetComponent = ({ context }) => {
       <g clipPath="url(#orbitalMapClip)">
         <rect x="48" y="106" width="424" height="220" rx="8" fill="url(#orbitalPanelShade)" />
         <rect x="48" y="106" width="424" height="220" fill="url(#orbitalGrid)" opacity="0.72" />
-        <path d="M260 106 V326 M48 216 H472" stroke="#56aaff" strokeOpacity="0.14" />
+        <path d="M260 106 V326 M48 216 H472" stroke={colors.lineColor} strokeOpacity="0.14" />
         <path d="M64 284 C142 220, 174 148, 270 132 C352 118, 414 138, 456 172" fill="none" stroke="#69a8ff" strokeOpacity="0.11" />
         <path d="M64 158 C152 104, 288 104, 458 138" fill="none" stroke="#69a8ff" strokeOpacity="0.12" strokeDasharray="8 9" />
         <rect x={sweepX} y="106" width="34" height="220" fill="url(#orbitalScan)" opacity="0.34" />
@@ -204,12 +206,12 @@ export const OrbitalNavigationPanel: PresetComponent = ({ context }) => {
           <circle cx="405" cy="130" r="2.5" fill="#8fd8ff" opacity={0.72 + Math.max(0, loopSin(progress, 0.22)) * 0.2} filter="url(#orbitalGlow)" />
         </g>
       </g>
-      <rect x="48.5" y="106.5" width="423" height="219" rx="8" fill="none" stroke="#5fa8ff" strokeOpacity="0.26" />
+      <rect x="48.5" y="106.5" width="423" height="219" rx="8" fill="none" stroke={colors.lineColor} strokeOpacity="0.26" />
 
       <g transform="translate(48 366)">
         {metricRows.map(([label, value], index) => (
           <g key={label} transform={`translate(${index * 119} 0)`}>
-            <path d="M0 -22 V28" stroke="#5fa8ff" strokeOpacity={index === 0 ? 0 : 0.18} />
+            <path d="M0 -22 V28" stroke={colors.lineColor} strokeOpacity={index === 0 ? 0 : 0.18} />
             <text x="8" y="-6" className="ui-caption" opacity="0.78">{label}</text>
             <text x="8" y="22" className="ui-value" fill="#83a9ff">{value}</text>
           </g>
@@ -217,7 +219,7 @@ export const OrbitalNavigationPanel: PresetComponent = ({ context }) => {
       </g>
 
       <text x="48" y="448" className="ui-title" fill="#8fb9ff">SYSTEM STATUS</text>
-      <path d="M48 458 H78" stroke="#77dfff" strokeWidth="2" strokeOpacity="0.82" />
+      <path d="M48 458 H78" stroke={colors.lineColor} strokeWidth="2" strokeOpacity="0.82" />
 
       <g transform="translate(48 482)">
         <rect x="0" y="-18" width="424" height="200" rx="6" fill="#07111e" opacity="0.42" stroke="#5fa8ff" strokeOpacity="0.1" />
@@ -247,7 +249,7 @@ export const OrbitalNavigationPanel: PresetComponent = ({ context }) => {
 
       <g transform="translate(48 714)">
         <text x="0" y="0" className="ui-title" fill="#8fb9ff">OVERALL STATUS</text>
-        <rect x="282" y="-26" width="132" height="42" rx="2" fill="#06212b" stroke="#3ce7ff" strokeOpacity={0.54 + Math.abs(loopSin(progress)) * 0.22} />
+        <rect x="282" y="-26" width="132" height="42" rx="2" fill="#06212b" stroke={colors.lineColor} strokeOpacity={0.54 + Math.abs(loopSin(progress)) * 0.22} />
         <text x="348" y="1" className="ui-title" fill="#6df4ff" textAnchor="middle" opacity={0.82 + Math.abs(loopSin(progress, 0.08)) * 0.16}>NOMINAL</text>
       </g>
 

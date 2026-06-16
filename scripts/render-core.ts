@@ -1,4 +1,4 @@
-import { chromium, type Page } from "playwright";
+import { chromium, type Browser, type Page } from "playwright";
 import { mkdir, rm } from "node:fs/promises";
 import path from "node:path";
 import type { RenderJob } from "../src/render/types";
@@ -9,23 +9,24 @@ export type RenderResult = {
   frames: number;
 };
 
-const openSourceTextFonts = [
-  "OPPOSans",
-  "OPPO Sans",
-  "Source Han Sans SC",
-  "Source Han Sans CN",
-  "Source Han Sans",
-  "Noto Sans CJK SC",
-  "Noto Sans SC",
-  "思源黑体",
-  "思源黑体 SC",
-  "思源黑体 CN",
+const requiredOppoSansFonts = [
+  "OPPOSans L",
+  "OPPOSans R",
+  "OPPOSans M",
+  "OPPOSans H",
+  "OPPOSans B",
 ] as const;
 
 type PlatformFont = {
   familyName: string;
   glyphCount: number;
 };
+
+const renderBrowserChannels = [
+  process.env.AR_RENDER_BROWSER_CHANNEL,
+  "msedge",
+  "chrome",
+].filter((channel): channel is string => Boolean(channel));
 
 function normalizeFontName(fontName: string) {
   return fontName
@@ -35,13 +36,12 @@ function normalizeFontName(fontName: string) {
     .toLowerCase();
 }
 
-function isOpenSourceTextFont(fontName: string) {
+function isRequiredOppoSansFont(fontName: string) {
   const normalizedFont = normalizeFontName(fontName);
 
-  return openSourceTextFonts.some((openSourceFont) => {
-    const normalizedOpenSourceFont = normalizeFontName(openSourceFont);
-    return normalizedFont === normalizedOpenSourceFont
-      || normalizedFont.startsWith(`${normalizedOpenSourceFont} `);
+  return requiredOppoSansFonts.some((requiredFont) => {
+    const normalizedRequiredFont = normalizeFontName(requiredFont);
+    return normalizedFont === normalizedRequiredFont;
   });
 }
 
@@ -76,12 +76,12 @@ async function verifyOpenSourceTextFonts(page: Page) {
     }
   }
 
-  const blockedFonts = [...usedFonts.keys()].filter((fontName) => !isOpenSourceTextFont(fontName));
+  const blockedFonts = [...usedFonts.keys()].filter((fontName) => !isRequiredOppoSansFont(fontName));
 
   if (blockedFonts.length > 0) {
     throw new Error(
       `Font verification failed: Chromium used ${blockedFonts.join(", ")}. `
-        + `Install or enable one of these open-source fonts: ${openSourceTextFonts.join(", ")}.`,
+        + `Install and enable OPPOSANS fonts: ${requiredOppoSansFonts.join(", ")}.`,
     );
   }
 
@@ -90,12 +90,30 @@ async function verifyOpenSourceTextFonts(page: Page) {
   }
 }
 
+async function launchRenderBrowser(): Promise<Browser> {
+  const errors: string[] = [];
+
+  for (const channel of renderBrowserChannels) {
+    try {
+      return await chromium.launch({ channel });
+    } catch (error) {
+      errors.push(`${channel}: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+
+  throw new Error(
+    "Render browser launch failed. Install Microsoft Edge or Chrome, "
+      + "or set AR_RENDER_BROWSER_CHANNEL to an allowed Playwright Chromium channel. "
+      + errors.join("\n"),
+  );
+}
+
 export async function renderJob(
   job: RenderJob,
   baseUrl: string,
   outputRoot = path.resolve(process.cwd(), "output"),
 ): Promise<RenderResult> {
-  const browser = await chromium.launch();
+  const browser = await launchRenderBrowser();
 
   try {
     for (const preset of job.presets) {
