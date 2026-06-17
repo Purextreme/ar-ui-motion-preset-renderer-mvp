@@ -3,7 +3,17 @@ export type PresetType =
   | "MaterialColorPanel"
   | "ShipDetailPanel"
   | "ComponentLibrary"
-  | "OrbitalOverview";
+  | "OrbitalOverview"
+  | "SystemDiagnosticsPanel"
+  | "DesignConfidenceCard"
+  | "TrajectorySimulationCard"
+  | "HullStressMap"
+  | "ShipIdentityCard"
+  | "RingSegmentTag"
+  | "ThrustVectoringPanel"
+  | "StructuralIntegrityCard"
+  | "CourseVectorPanel"
+  | "OrbitalNavigationCard";
 
 export type PresetProps = {
   id: string;

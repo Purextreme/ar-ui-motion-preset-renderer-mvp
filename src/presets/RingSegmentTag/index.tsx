@@ -1,0 +1,1 @@
+export { RingSegmentTag } from "../HudCards";
