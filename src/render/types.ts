@@ -1,7 +1,9 @@
 export type PresetType =
   | "OrbitalNavigationPanel"
   | "MaterialColorPanel"
-  | "ShipDetailPanel";
+  | "ShipDetailPanel"
+  | "ComponentLibrary"
+  | "OrbitalOverview";
 
 export type PresetProps = {
   id: string;
