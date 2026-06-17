@@ -2,18 +2,31 @@ import { loopSin } from "../../utils/animation";
 import { getPresetColors, getPresetColorStyle } from "../../render/presetStyle";
 import type { PresetComponent } from "../../render/types";
 
-type ComponentKind = "reactor" | "habitat" | "docking" | "engine";
-
-const components: Array<{
-  name: string;
-  version: string;
-  desc: string;
-  kind: ComponentKind;
-}> = [
-  { name: "CORE REACTOR", version: "MK-III", desc: "Balanced Output", kind: "reactor" },
-  { name: "HABITAT RING", version: "H2-R", desc: "High Capacity", kind: "habitat" },
-  { name: "DOCKING NODE", version: "DN-6", desc: "Multi-Port", kind: "docking" },
-  { name: "ENGINE CLUSTER", version: "EC-9", desc: "Vector Thrust", kind: "engine" },
+const components = [
+  {
+    name: "CORE REACTOR",
+    version: "MK-III",
+    desc: "Balanced Output",
+    imageSrc: "/component-library/core-reactor.png",
+  },
+  {
+    name: "HABITAT RING",
+    version: "H2-R",
+    desc: "High Capacity",
+    imageSrc: "/component-library/habitat-ring.png",
+  },
+  {
+    name: "DOCKING NODE",
+    version: "DN-6",
+    desc: "Multi-Port",
+    imageSrc: "/component-library/docking-node.png",
+  },
+  {
+    name: "ENGINE CLUSTER",
+    version: "EC-9",
+    desc: "Vector Thrust",
+    imageSrc: "/component-library/engine-cluster.png",
+  },
 ];
 
 const materials = [
@@ -44,11 +57,13 @@ function ThumbnailFrame({
         stroke="var(--preset-line-color)"
         strokeOpacity={active ? 0.58 : 0.3}
       />
-      <rect x="36" y={rowY} width="244" height="116" rx="8" fill="url(#clGrid)" opacity="0.68" />
+      <g clipPath={`url(#clThumbClip-${rowY})`}>{children}</g>
+      <rect x="36" y={rowY} width="244" height="116" rx="8" fill="url(#clThumbShade)" opacity="0.56" />
+      <rect x="36" y={rowY} width="244" height="116" rx="8" fill="url(#clGrid)" opacity="0.2" />
       <path
         d={`M46 ${rowY + 30} H270 M62 ${rowY + 6} V${rowY + 110} M254 ${rowY + 6} V${rowY + 110}`}
         stroke="var(--preset-line-color)"
-        strokeOpacity="0.1"
+        strokeOpacity="0.12"
       />
       <path
         d={`M44 ${rowY + 13} V${rowY + 8} H61 M255 ${rowY + 8} H272 V${rowY + 25} M272 ${rowY + 91} V${rowY + 108} H255 M61 ${rowY + 108} H44 V${rowY + 91}`}
@@ -57,7 +72,39 @@ function ThumbnailFrame({
         strokeOpacity={active ? 0.68 : 0.36}
         strokeWidth="1.4"
       />
-      <g clipPath={`url(#clThumbClip-${rowY})`}>{children}</g>
+    </g>
+  );
+}
+
+function ComponentImage({
+  imageSrc,
+  rowY,
+  pulse,
+}: {
+  imageSrc: string;
+  rowY: number;
+  pulse: number;
+}) {
+  return (
+    <g>
+      <image
+        href={imageSrc}
+        x="36"
+        y={rowY}
+        width="244"
+        height="116"
+        preserveAspectRatio="xMidYMid slice"
+        opacity={0.86 + pulse * 0.12}
+      />
+      <rect
+        x="36"
+        y={rowY}
+        width="244"
+        height="116"
+        fill="url(#clImageSweep)"
+        opacity={0.22 + pulse * 0.12}
+        style={{ mixBlendMode: "screen" }}
+      />
     </g>
   );
 }
@@ -108,127 +155,6 @@ function InfoPanel({
   );
 }
 
-function ReactorModel({ rowY, pulse }: { rowY: number; pulse: number }) {
-  return (
-    <g transform={`translate(58 ${rowY + 13})`} filter="url(#clModelGlow)">
-      <ellipse cx="146" cy="47" rx="34" ry="38" fill="url(#clMetalDark)" stroke="var(--preset-highlight-text-color)" strokeOpacity="0.74" />
-      <path d="M54 20 L148 10 C164 18 172 34 172 48 C172 64 164 78 148 86 L54 75 C40 66 34 56 34 47 C34 37 40 27 54 20Z" fill="url(#clMetal)" stroke="var(--preset-line-color)" strokeOpacity="0.72" />
-      <path d="M47 23 C62 33 68 62 50 73 M82 16 C96 29 100 67 84 82 M118 12 C132 27 134 70 120 86" fill="none" stroke="var(--preset-highlight-text-color)" strokeOpacity="0.55" strokeWidth="2" />
-      <ellipse cx="56" cy="47" rx="21" ry="30" fill="url(#clMetalDark)" stroke="var(--preset-highlight-text-color)" strokeOpacity="0.58" />
-      <ellipse cx="147" cy="47" rx="22" ry="26" fill="#071326" stroke="var(--preset-highlight-text-color)" strokeOpacity="0.86" strokeWidth="2" />
-      <ellipse cx="147" cy="47" rx="12" ry="15" fill="none" stroke="var(--preset-line-color)" strokeOpacity="0.85" strokeWidth="2" />
-      <circle cx="147" cy="47" r="4" fill="var(--preset-highlight-text-color)" opacity={0.55 + pulse * 0.36} />
-      <path d="M42 38 H16 M42 56 H16 M168 31 L196 25 M170 64 L196 70" stroke="var(--preset-line-color)" strokeOpacity="0.64" strokeWidth="2" />
-      {[0, 1, 2, 3, 4, 5].map((dot) => (
-        <circle
-          key={dot}
-          cx={147 + Math.cos(dot * Math.PI / 3) * 17}
-          cy={47 + Math.sin(dot * Math.PI / 3) * 20}
-          r="2"
-          fill="var(--preset-highlight-text-color)"
-          opacity="0.75"
-        />
-      ))}
-      <path d="M64 31 H111 M64 63 H110 M93 20 V76" stroke="#d8ecff" strokeOpacity="0.22" />
-    </g>
-  );
-}
-
-function HabitatModel({ rowY, pulse }: { rowY: number; pulse: number }) {
-  return (
-    <g transform={`translate(54 ${rowY + 18})`} filter="url(#clModelGlow)">
-      <ellipse cx="106" cy="45" rx="78" ry="35" fill="none" stroke="var(--preset-highlight-text-color)" strokeOpacity="0.78" strokeWidth="6" />
-      <ellipse cx="106" cy="45" rx="56" ry="22" fill="none" stroke="#071326" strokeOpacity="0.9" strokeWidth="12" />
-      <ellipse cx="106" cy="45" rx="75" ry="33" fill="none" stroke="var(--preset-line-color)" strokeOpacity="0.45" strokeWidth="2" strokeDasharray="7 7" />
-      <path d="M39 27 C75 6 136 6 174 27 M42 63 C78 82 135 82 170 63" fill="none" stroke="var(--preset-highlight-text-color)" strokeOpacity="0.46" strokeWidth="2.5" />
-      <path d="M55 20 L70 12 M80 11 L84 27 M116 10 L114 28 M148 15 L138 30 M51 69 L66 77 M92 80 L91 64 M126 79 L124 63 M157 70 L145 60" stroke="var(--preset-highlight-text-color)" strokeOpacity="0.7" strokeWidth="2.2" />
-      <path d="M106 45 L30 45 M106 45 L182 45 M106 45 L70 18 M106 45 L144 18 M106 45 L72 72 M106 45 L145 72" stroke="var(--preset-line-color)" strokeOpacity="0.3" />
-      <circle cx="106" cy="45" r="8" fill="var(--preset-highlight-text-color)" opacity={0.25 + pulse * 0.28} filter="url(#clSoftGlow)" />
-      <path d="M21 39 H3 M189 39 H208 M18 52 H0 M191 52 H210" stroke="var(--preset-line-color)" strokeOpacity="0.56" strokeWidth="2" />
-      {[0, 1, 2, 3, 4, 5, 6, 7].map((dot) => {
-        const angle = (dot / 8) * Math.PI * 2;
-        return (
-          <rect
-            key={dot}
-            x={102 + Math.cos(angle) * 73}
-            y={42 + Math.sin(angle) * 31}
-            width="8"
-            height="5"
-            rx="1"
-            fill="var(--preset-highlight-text-color)"
-            opacity="0.62"
-            transform={`rotate(${angle * 180 / Math.PI} ${106 + Math.cos(angle) * 73} ${45 + Math.sin(angle) * 31})`}
-          />
-        );
-      })}
-    </g>
-  );
-}
-
-function DockingModel({ rowY, pulse }: { rowY: number; pulse: number }) {
-  return (
-    <g transform={`translate(56 ${rowY + 14})`} filter="url(#clModelGlow)">
-      <path d="M54 27 L142 17 C158 25 168 36 169 48 C168 60 158 72 142 81 L54 70 C39 63 31 55 31 48 C31 40 39 33 54 27Z" fill="url(#clMetal)" stroke="var(--preset-line-color)" strokeOpacity="0.72" />
-      <ellipse cx="56" cy="49" rx="26" ry="28" fill="url(#clMetalDark)" stroke="var(--preset-highlight-text-color)" strokeOpacity="0.58" />
-      <ellipse cx="142" cy="49" rx="28" ry="33" fill="url(#clMetalDark)" stroke="var(--preset-highlight-text-color)" strokeOpacity="0.8" strokeWidth="2" />
-      <ellipse cx="142" cy="49" rx="17" ry="22" fill="none" stroke="var(--preset-line-color)" strokeOpacity="0.84" strokeWidth="3" />
-      <ellipse cx="142" cy="49" rx="7" ry="10" fill="var(--preset-highlight-text-color)" opacity={0.32 + pulse * 0.3} />
-      <path d="M58 29 C70 39 72 60 58 69 M91 22 C104 36 105 65 91 76 M121 19 C134 34 135 66 122 79" fill="none" stroke="var(--preset-highlight-text-color)" strokeOpacity="0.48" strokeWidth="2" />
-      <path d="M27 36 H7 M27 61 H7 M166 30 L196 20 M169 48 H202 M166 67 L196 77" stroke="var(--preset-line-color)" strokeOpacity="0.72" strokeWidth="2.5" />
-      <path d="M7 36 L7 61 M196 20 L202 48 L196 77" fill="none" stroke="var(--preset-line-color)" strokeOpacity="0.28" />
-      {[0, 1, 2, 3, 4, 5].map((dot) => (
-        <circle
-          key={dot}
-          cx={142 + Math.cos(dot * Math.PI / 3) * 21}
-          cy={49 + Math.sin(dot * Math.PI / 3) * 25}
-          r="2.3"
-          fill="var(--preset-highlight-text-color)"
-          opacity="0.72"
-        />
-      ))}
-    </g>
-  );
-}
-
-function EngineModel({ rowY, pulse }: { rowY: number; pulse: number }) {
-  const nozzles = [
-    [142, 28, 16],
-    [172, 39, 20],
-    [133, 60, 20],
-    [164, 72, 16],
-  ];
-
-  return (
-    <g transform={`translate(48 ${rowY + 16})`} filter="url(#clModelGlow)">
-      <path d="M25 33 C54 16 105 15 146 26 C158 42 158 60 146 76 C105 90 54 85 25 66 C14 55 14 43 25 33Z" fill="url(#clMetal)" stroke="var(--preset-line-color)" strokeOpacity="0.72" />
-      <path d="M42 28 L27 18 M42 71 L27 82 M81 21 V84 M112 24 V80" stroke="var(--preset-highlight-text-color)" strokeOpacity="0.42" strokeWidth="2" />
-      <path d="M37 38 H118 M37 60 H118 M56 28 C65 40 65 58 56 71 M96 24 C106 38 106 63 96 80" fill="none" stroke="var(--preset-highlight-text-color)" strokeOpacity="0.34" strokeWidth="2" />
-      {nozzles.map(([cx, cy, r], index) => (
-        <g key={`${cx}-${cy}`}>
-          <ellipse cx={cx} cy={cy} rx={r + 11} ry={r * 0.74 + 8} fill="url(#clMetalDark)" stroke="var(--preset-highlight-text-color)" strokeOpacity="0.74" strokeWidth="2" />
-          <ellipse cx={cx} cy={cy} rx={r} ry={r * 0.74} fill="#061024" stroke="var(--preset-line-color)" strokeOpacity="0.88" strokeWidth="2" />
-          <ellipse cx={cx} cy={cy} rx={r * 0.46} ry={r * 0.32} fill="var(--preset-highlight-text-color)" opacity={0.22 + pulse * 0.18 + index * 0.03} />
-        </g>
-      ))}
-      <path d="M17 45 H0 M18 57 H0 M185 39 H211 M177 72 H202" stroke="var(--preset-line-color)" strokeOpacity="0.58" strokeWidth="2" />
-      <path d="M116 22 C139 21 166 31 184 45 M114 82 C140 84 168 76 184 58" fill="none" stroke="var(--preset-highlight-text-color)" strokeOpacity="0.22" />
-    </g>
-  );
-}
-
-function ComponentModel({ kind, rowY, pulse }: { kind: ComponentKind; rowY: number; pulse: number }) {
-  switch (kind) {
-    case "reactor":
-      return <ReactorModel rowY={rowY} pulse={pulse} />;
-    case "habitat":
-      return <HabitatModel rowY={rowY} pulse={pulse} />;
-    case "docking":
-      return <DockingModel rowY={rowY} pulse={pulse} />;
-    case "engine":
-      return <EngineModel rowY={rowY} pulse={pulse} />;
-  }
-}
-
 export const ComponentLibrary: PresetComponent = ({ props, context }) => {
   const { progress } = context;
   const colors = getPresetColors(props.params);
@@ -256,6 +182,11 @@ export const ComponentLibrary: PresetComponent = ({ props, context }) => {
           <stop offset="45%" stopColor="#0b1430" stopOpacity="0" />
           <stop offset="100%" stopColor="#000511" stopOpacity="0.7" />
         </linearGradient>
+        <linearGradient id="clThumbShade" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0%" stopColor="#08172d" stopOpacity="0.12" />
+          <stop offset="62%" stopColor="#050b18" stopOpacity="0" />
+          <stop offset="100%" stopColor="#02050d" stopOpacity="0.42" />
+        </linearGradient>
         <linearGradient id="clScan" x1="0" x2="0" y1="0" y2="1">
           <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
           <stop offset="50%" stopColor={accentColor} stopOpacity="0.22" />
@@ -266,15 +197,11 @@ export const ComponentLibrary: PresetComponent = ({ props, context }) => {
           <stop offset="50%" stopColor="#f2d9a7" stopOpacity="0.18" />
           <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
         </linearGradient>
-        <linearGradient id="clMetal" x1="0" x2="1" y1="0" y2="1">
-          <stop offset="0%" stopColor="#dcecff" stopOpacity="0.82" />
-          <stop offset="45%" stopColor="#739bd5" stopOpacity="0.54" />
-          <stop offset="100%" stopColor="#24416b" stopOpacity="0.76" />
-        </linearGradient>
-        <linearGradient id="clMetalDark" x1="0" x2="1" y1="0" y2="1">
-          <stop offset="0%" stopColor="#a8c6ee" stopOpacity="0.66" />
-          <stop offset="62%" stopColor="#244064" stopOpacity="0.82" />
-          <stop offset="100%" stopColor="#081225" stopOpacity="0.94" />
+        <linearGradient id="clImageSweep" x1="0" x2="1">
+          <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
+          <stop offset="42%" stopColor="#9fc6ff" stopOpacity="0.08" />
+          <stop offset="78%" stopColor="#ffffff" stopOpacity="0.16" />
+          <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
         </linearGradient>
         <linearGradient id="clMatPurple" x1="0" x2="1" y1="0" y2="1">
           <stop offset="0%" stopColor="#c06bff" stopOpacity="0.94" />
@@ -312,13 +239,6 @@ export const ComponentLibrary: PresetComponent = ({ props, context }) => {
         </filter>
         <filter id="clSoftGlow" x="-30%" y="-30%" width="160%" height="160%">
           <feGaussianBlur stdDeviation="2.2" result="blur" />
-          <feMerge>
-            <feMergeNode in="blur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-        <filter id="clModelGlow" x="-28%" y="-28%" width="156%" height="156%">
-          <feGaussianBlur stdDeviation="1.4" result="blur" />
           <feMerge>
             <feMergeNode in="blur" />
             <feMergeNode in="SourceGraphic" />
@@ -381,7 +301,7 @@ export const ComponentLibrary: PresetComponent = ({ props, context }) => {
         return (
           <g key={comp.name}>
             <ThumbnailFrame rowY={rowY} active={active}>
-              <ComponentModel kind={comp.kind} rowY={rowY} pulse={pulse} />
+              <ComponentImage imageSrc={comp.imageSrc} rowY={rowY} pulse={pulse} />
             </ThumbnailFrame>
             <InfoPanel
               rowY={rowY}
