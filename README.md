@@ -4,17 +4,33 @@
 
 它不是普通网页展示页，而是用于生成可导入 AE 合成的透明背景 motion graphics 素材。
 
+![AR UI Motion Preset Renderer preview](./public/readme-preview.png)
+
 ## 功能
 
 - Vite + React 本地网页预览。
 - 默认画布：`1000 x 1000`。
 - 当前 preset 始终居中。
-- 动画完全由 frame 驱动。
+- 动画由 frame / progress 驱动，便于稳定导出序列帧。
 - 支持导出透明背景 PNG sequence。
-- 当前包含 3 个 preset：
+- 支持在网页里调整文字、线条和高亮颜色。
+- 支持当前 preset 单独导出或全部 preset 批量导出。
+- 当前包含 15 个 preset：
   - `OrbitalNavigationPanel`
   - `MaterialColorPanel`
   - `ShipDetailPanel`
+  - `ComponentLibrary`
+  - `OrbitalOverview`
+  - `SystemDiagnosticsPanel`
+  - `DesignConfidenceCard`
+  - `TrajectorySimulationCard`
+  - `HullStressMap`
+  - `ShipIdentityCard`
+  - `RingSegmentTag`
+  - `ThrustVectoringPanel`
+  - `StructuralIntegrityCard`
+  - `CourseVectorPanel`
+  - `OrbitalNavigationCard`
 
 `ShipDetailPanel` 中的飞船区域只做预览 guide，导出时不会包含 `此处留空` 文案。飞船图片建议在 AE 中后期合成。
 
@@ -23,6 +39,7 @@
 - Node.js
 - npm
 - Playwright Chromium
+- OPPOSANS 字体
 
 第一次安装后，如果导出时报 Playwright 浏览器缺失，需要运行：
 
@@ -54,6 +71,7 @@ http://127.0.0.1:5173/
 - 播放 / 暂停动画。
 - 拖动 frame slider 查看指定帧。
 - 设置 `frames` 和 `fps`。
+- 调整文字、线条和高亮颜色。
 - 点击 `Render Current` 导出当前 preset。
 - 点击 `Render All` 导出全部 preset。
 
@@ -86,17 +104,7 @@ npm run render
 
 ```text
 output/
-  OrbitalNavigationPanel/
-    frame_0000.png
-    frame_0001.png
-    ...
-
-  MaterialColorPanel/
-    frame_0000.png
-    frame_0001.png
-    ...
-
-  ShipDetailPanel/
+  <PresetType>/
     frame_0000.png
     frame_0001.png
     ...
@@ -126,3 +134,4 @@ npm run render
 - 不需要上传 ship PNG。
 - 网页只负责预览和导出 UI 动画素材。
 - 最终位置、缩放、透明度和合成由 AE 完成。
+- 如果本机缺少 OPPOSANS 字体，导出流程会失败。
