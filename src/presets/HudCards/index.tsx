@@ -63,8 +63,23 @@ export const DesignConfidenceCard: PresetComponent = ({ props, context }) => {
 export const TrajectorySimulationCard: PresetComponent = ({ props, context }) => {
   const colors = getPresetColors(props.params);
   const progress = context.progress;
-  const nodeX = 172 + progress * 260;
-  const nodeY = 190 - Math.sin(progress * Math.PI) * 80;
+  const departure = { x: 150, y: 208 };
+  const target = { x: 724, y: 204 };
+  const transferA = { x: 326, y: 150 };
+  const transferB = { x: 526, y: 142 };
+  const inverseProgress = 1 - progress;
+  const satelliteX =
+    inverseProgress ** 3 * departure.x +
+    3 * inverseProgress ** 2 * progress * transferA.x +
+    3 * inverseProgress * progress ** 2 * transferB.x +
+    progress ** 3 * target.x;
+  const satelliteY =
+    inverseProgress ** 3 * departure.y +
+    3 * inverseProgress ** 2 * progress * transferA.y +
+    3 * inverseProgress * progress ** 2 * transferB.y +
+    progress ** 3 * target.y;
+  const transferPath = `M${departure.x} ${departure.y} C${transferA.x} ${transferA.y} ${transferB.x} ${transferB.y} ${target.x} ${target.y}`;
+  const labelTextStyle = { fontWeight: 400 };
 
   return (
     <svg className="preset-svg trajectory-simulation-svg" viewBox="0 0 920 360" role="img" style={getPresetColorStyle(props.params)}>
@@ -80,18 +95,18 @@ export const TrajectorySimulationCard: PresetComponent = ({ props, context }) =>
       <SimpleHudFrame idPrefix="trajectory" width={920} height={360} title="TRAJECTORY SIMULATION" progress={progress} colors={colors} showGrid>
         <image href={`${assetBase}/planet-earth.png`} x="78" y="88" width="112" height="112" opacity="0.9" />
         <image href={`${assetBase}/planet-jupiter.png`} x="754" y="118" width="110" height="110" opacity="0.92" />
-        <path d="M150 208 C322 120 512 78 724 204" fill="none" stroke="#dfe9ff" strokeOpacity="0.62" strokeWidth="3" />
-        <path d="M150 208 C346 168 482 152 724 204" fill="none" stroke="#4b91ff" strokeOpacity="0.58" strokeWidth="2" />
-        <path d="M150 208 C334 204 508 218 724 262" fill="none" stroke={colors.lineColor} strokeOpacity="0.14" />
-        <circle cx={nodeX} cy={nodeY} r="5" fill="#ffc46d" filter="url(#trajectoryGlow)" />
-        <line x1={nodeX} y1={nodeY - 28} x2={nodeX} y2={nodeY + 28} stroke="#ffffff" strokeOpacity="0.28" />
+        <path d="M150 208 C300 126 534 112 724 204" fill="none" stroke="#dfe9ff" strokeOpacity="0.54" strokeWidth="2.4" />
+        <path d={transferPath} fill="none" stroke="#4b91ff" strokeOpacity="0.66" strokeWidth="2" />
+        <path d="M150 208 C328 224 528 236 724 264" fill="none" stroke={colors.lineColor} strokeOpacity="0.12" />
+        <circle cx={satelliteX} cy={satelliteY} r="5" fill="#ffc46d" filter="url(#trajectoryGlow)" />
+        <line x1={satelliteX} y1={satelliteY - 28} x2={satelliteX} y2={satelliteY + 28} stroke="#ffffff" strokeOpacity="0.24" />
         <circle cx="150" cy="208" r="5" fill="#87c6ff" filter="url(#trajectoryGlow)" />
         <circle cx="724" cy="204" r="6" fill="#78bdff" filter="url(#trajectoryGlow)" />
-        <text x="118" y="274" className="ui-title" fontSize="19" textAnchor="middle">EARTH</text>
-        <text x="118" y="302" className="ui-title" fontSize="19" textAnchor="middle">DEPARTURE</text>
-        <text x="454" y="312" className="ui-title" fontSize="24" textAnchor="middle" fill="#8fb9ff">ETA 180d 14h 32m</text>
-        <text x="810" y="286" className="ui-title" fontSize="20" textAnchor="middle">TARGET</text>
-        <text x="810" y="316" className="ui-title" fontSize="20" textAnchor="middle">JUPITER SYSTEM</text>
+        <text x="118" y="274" className="ui-title" fontSize="19" opacity="0.86" textAnchor="middle" style={labelTextStyle}>EARTH</text>
+        <text x="118" y="302" className="ui-title" fontSize="19" opacity="0.86" textAnchor="middle" style={labelTextStyle}>DEPARTURE</text>
+        <text x="454" y="312" className="ui-title" fontSize="24" opacity="0.9" textAnchor="middle" fill="#8fb9ff" style={labelTextStyle}>ETA 180d 14h 32m</text>
+        <text x="810" y="286" className="ui-title" fontSize="20" opacity="0.86" textAnchor="middle" style={labelTextStyle}>TARGET</text>
+        <text x="810" y="316" className="ui-title" fontSize="20" opacity="0.86" textAnchor="middle" style={labelTextStyle}>JUPITER SYSTEM</text>
       </SimpleHudFrame>
     </svg>
   );
@@ -99,7 +114,9 @@ export const TrajectorySimulationCard: PresetComponent = ({ props, context }) =>
 
 export const HullStressMap: PresetComponent = ({ props, context }) => {
   const colors = getPresetColors(props.params);
-  const scanRotation = context.progress * 360;
+  const scanRotation = context.progress * 420;
+  const scanPulse = 0.46 + Math.max(0, loopSin(context.progress, 0.16)) * 0.22;
+  const scanOffset = (context.progress * 188) % 188;
 
   return (
     <svg className="preset-svg hull-stress-map-svg" viewBox="0 0 420 520" role="img" style={getPresetColorStyle(props.params)}>
@@ -117,19 +134,59 @@ export const HullStressMap: PresetComponent = ({ props, context }) => {
             <feMergeNode in="SourceGraphic" />
           </feMerge>
         </filter>
+        <clipPath id="hullStressPlotClip">
+          <rect x="32" y="82" width="356" height="328" rx="4" />
+        </clipPath>
       </defs>
       <SimpleHudFrame idPrefix="hullStress" width={420} height={520} title="HULL STRESS MAP" progress={context.progress} colors={colors} showGrid>
-        <image href={`${assetBase}/hull-stress-assembly.png`} x="54" y="112" width="312" height="312" opacity="0.88" />
-        <g transform={`rotate(${scanRotation} 210 268)`} opacity="0.28">
-          <line x1="210" y1="84" x2="210" y2="452" stroke="#ffffff" />
-          <line x1="26" y1="268" x2="394" y2="268" stroke="#ffffff" />
+        <g clipPath="url(#hullStressPlotClip)">
+          <rect x="32" y="82" width="356" height="328" fill="#06101f" opacity="0.52" />
+          <g opacity="0.16" stroke={colors.lineColor}>
+            <circle cx="210" cy="246" r="132" fill="none" />
+            <circle cx="210" cy="246" r="72" fill="none" />
+            <line x1="46" y1="246" x2="374" y2="246" />
+            <line x1="210" y1="90" x2="210" y2="402" />
+          </g>
+          <image href={`${assetBase}/hull-stress-assembly.png`} x="26" y="74" width="368" height="368" opacity="0.94" />
+          <g transform={`rotate(${scanRotation} 210 246)`} opacity={scanPulse}>
+            <path d="M210 246 L210 82 A164 164 0 0 1 298 108 Z" fill="#dcecff" opacity="0.14" />
+            <path d="M210 246 L210 82 A164 164 0 0 1 242 85 Z" fill="#7ec4ff" opacity="0.16" />
+            <line x1="210" y1="246" x2="210" y2="78" stroke="#ffffff" strokeOpacity="0.78" strokeWidth="1.2" />
+            <line x1="210" y1="246" x2="210" y2="96" stroke="#74d5ff" strokeOpacity="0.72" strokeWidth="3.2" filter="url(#hullStressGlow)" />
+          </g>
+          <g opacity="0.58" stroke="#dcecff" strokeLinecap="round" filter="url(#hullStressGlow)">
+            <path
+              d="M86 246 A124 124 0 0 1 334 246"
+              fill="none"
+              strokeDasharray="44 280"
+              strokeDashoffset={-scanOffset}
+              strokeWidth="2"
+            />
+            <path
+              d="M118 246 A92 92 0 0 0 302 246"
+              fill="none"
+              strokeDasharray="32 230"
+              strokeDashoffset={scanOffset * 0.78}
+              strokeWidth="1.4"
+            />
+          </g>
+          <g opacity={0.18 + Math.max(0, loopCos(context.progress, 0.08)) * 0.18} stroke="#ffffff">
+            <line x1="62" y1={152 + scanOffset} x2="358" y2={152 + scanOffset} strokeOpacity="0.42" />
+            <line x1="78" y1={160 + scanOffset} x2="342" y2={160 + scanOffset} strokeOpacity="0.18" />
+          </g>
         </g>
-        <path d="M356 48 L374 82 H338 Z" fill="none" stroke="#ffb85c" strokeWidth="3" filter="url(#hullStressGlow)" />
-        <line x1="356" y1="58" x2="356" y2="72" stroke="#ffb85c" strokeWidth="3" />
-        <circle cx="356" cy="78" r="2.5" fill="#ffb85c" />
-        <rect x="44" y="438" width="332" height="20" fill="url(#hullStressScale)" filter="url(#hullStressGlow)" />
-        <text x="44" y="426" className="ui-small">0%</text>
-        <text x="376" y="426" className="ui-small" textAnchor="end">100%</text>
+        <path d="M358 22 L372 48 H344 Z" fill="rgba(255, 184, 92, 0.08)" stroke="#ffb85c" strokeWidth="2.4" filter="url(#hullStressGlow)" />
+        <line x1="358" y1="30" x2="358" y2="41" stroke="#ffb85c" strokeWidth="2.4" />
+        <circle cx="358" cy="45" r="2" fill="#ffb85c" />
+        <g transform="translate(44 430)">
+          <text x="0" y="-12" className="ui-small">0%</text>
+          <text x="332" y="-12" className="ui-small" textAnchor="end">100%</text>
+          <rect x="0" y="0" width="332" height="20" rx="2" fill="#0b1426" stroke={colors.lineColor} strokeOpacity="0.18" />
+          <rect x="0" y="0" width="332" height="20" rx="2" fill="url(#hullStressScale)" filter="url(#hullStressGlow)" />
+          {range(5).map((i) => (
+            <line key={i} x1={i * 83} y1="26" x2={i * 83} y2="34" stroke={colors.lineColor} strokeOpacity="0.32" />
+          ))}
+        </g>
       </SimpleHudFrame>
     </svg>
   );

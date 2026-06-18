@@ -1,6 +1,7 @@
 node_modules/
 dist/
 output/
+render v1/
 vite-dev.log
 vite-dev.err.log
 .DS_Store

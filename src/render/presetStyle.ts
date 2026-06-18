@@ -7,9 +7,9 @@ export type PresetColorParams = {
 };
 
 export const defaultPresetColors: PresetColorParams = {
-  textColor: "#c8e5ff",
-  lineColor: "#7ec4ff",
-  highlightTextColor: "#e9f8ff",
+  textColor: "#78a0d3",
+  lineColor: "#aad8fd",
+  highlightTextColor: "#95aafe",
 };
 
 function readColor(params: Record<string, unknown>, key: keyof PresetColorParams) {
